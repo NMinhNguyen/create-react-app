@@ -268,10 +268,16 @@ function createApp(
   }
 
   if (useYarn) {
-    fs.copySync(
-      require.resolve('./yarn.lock.cached'),
-      path.join(root, 'yarn.lock')
-    );
+    const yarnUsesDefaultRegistry =
+      execSync('yarnpkg config get registry')
+        .toString()
+        .trim() === 'https://registry.yarnpkg.com';
+    if (yarnUsesDefaultRegistry) {
+      fs.copySync(
+        require.resolve('./yarn.lock.cached'),
+        path.join(root, 'yarn.lock')
+      );
+    }
   }
 
   run(
